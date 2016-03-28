@@ -22,3 +22,22 @@ float minval(vector<float> a)
 	}
 	return min;
 }
+bool intersect(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, vector<float> & x, vector<float> & y) // replace: too manyperameters
+{
+	float m1 = (y2 - y1) / (x2 - x1);
+	float m2 = (y4 - y3) / (x4 - x3);
+	float c1 = y1 - m1*x1;
+	float c2 = y3 - m2*x3;
+
+	if (m1 - m2 == 0)
+	{
+		cout << "error: no intersection for intersect func" << endl;
+		return false;
+	}
+	else
+	{
+		x.push_back((c2 - c1) / (m1 - m2));
+		y.push_back(m1 * x.back() + c1);
+		return true;
+	}
+}

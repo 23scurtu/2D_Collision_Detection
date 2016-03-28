@@ -141,6 +141,7 @@ void poly::calcSides()
 
 bool poly::isconvex()
 {
+	
 	if (x.size() > 2)
 	{
 		calcSides();
@@ -164,11 +165,19 @@ bool poly::isconvex()
 
 void poly::createSubPolys()
 {
-	if (x.size() > 2 && sides.size() > 2) // no need 4 sides, is only acheck to see if isconvex was done or calc sides
+	vector<float> xintersects;
+	vector<float> yintersects;
+
+	if (x.size() > 2 && reflexAngles.size() > 0) // no need 4 sides, is only acheck to see if isconvex was done or calc sides
 	{
-		for (int i = 0; i != reflexAngles.size(); i++) // attentions start at 0
-		{
-			int &r = reflexAngles[i]; // temp alias to make lines shorter
+		//for (int i = 0; i != reflexAngles.size(); i++) // attentions start at 0
+		//{
+
+			//int &r = reflexAngles[i]; // temp alias to make lines shorter
+
+		int &r = reflexAngles[0];  // cmbine find reflex anglesto make find first reflex angle function and ind number of reflx angles
+
+
 
 			if (r == 0) // maybe incorperate into bottom one
 			{
@@ -176,7 +185,18 @@ void poly::createSubPolys()
 				{
 					if (sides[sides.size() - 1].isBetween(vec(x[u] - x[r], y[u] - y[r]), vec(x[u + 1] - x[r], y[u + 1] - y[r])))
 					{
-						
+						intersect(x[x.size() - 1],
+							   	  y[y.size() - 1],
+								  x[0],
+								  y[0],
+								  x[u],
+								  y[u],
+								  x[u+1],
+								  y[u+1],
+								  xintersects,
+								  yintersects);
+
+						cout << u + 1 << " lmao ";
 					}
 				}
 				
@@ -187,7 +207,18 @@ void poly::createSubPolys()
 				{
 					if (sides[r - 1].isBetween(vec(x[u] - x[r], y[u] - y[r]), vec(x[u + 1] - x[r], y[u + 1] - y[r])))
 					{
-						
+						intersect(x[r - 1], //  check
+								  y[r - 1],
+								  x[r],
+								  y[r],
+								  x[u],
+								  y[u],
+								  x[u + 1],
+								  y[u + 1],
+								  xintersects,
+								  yintersects);
+
+						cout << u + 1 << " exdee ";
 					}
 	
 				}
@@ -195,21 +226,44 @@ void poly::createSubPolys()
 				{
 					if (sides[r - 1].isBetween(vec(x[u] - x[r], y[u] - y[r]), vec(x[u + 1] - x[r], y[u + 1] - y[r])))
 					{
-
+						intersect(x[r - 1], //  check
+								  y[r - 1],
+								  x[r],
+								  y[r],
+								  x[u],
+								  y[u],
+								  x[u + 1],
+								  y[u + 1],
+								  xintersects,
+								  yintersects);
+						cout << u + 1 << " lol ";
 					}
 				}
-
 				if (r != x.size() - 1 && r != 1)
 				{
 					if (sides[r - 1].isBetween(vec(x[x.size() - 1] - x[r], y[x.size() - 1] - y[r]), vec(x[0] - x[r], y[0] - y[r])))
 					{
+						intersect(x[r - 1], //  check
+								  y[r - 1],
+								  x[r],
+								  y[r],
+								  x[x.size() - 1],
+								  y[x.size() - 1],
+								  x[0],
+								  y[0],
+								  xintersects,
+								  yintersects);
 
+						cout <<  x.size()  << " haha ";
 					}
 				}
-				
+			}
+			for (int i = 0; i < xintersects.size(); i++)
+			{
+				cout << "(" << xintersects[i] << "," << yintersects[i] << endl;
 			}
 
-		}
+		//}
 	}
 	cout << endl;
 }
