@@ -24,7 +24,7 @@ class poly
 		int originy;
 		void drawSolid(sf::RenderWindow &window, sf::Color color);
 		bool isconvex();
-		void createSubPolys();
+		void createConvexPolys();
 		void calcSides();
 };
 

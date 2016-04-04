@@ -145,12 +145,11 @@ bool poly::isconvex()
 	if (x.size() > 2)
 	{
 		calcSides();
-		reflexAngles.clear(); // make better
+		reflexAngles.clear(); // better method?
 
 		if (sides[sides.size() - 1].cross(sides[0]) < 0)
 		{
 			reflexAngles.push_back(0);
-			cout << "DONE";
 		}
 		for (int i = 0; i != sides.size() - 1; i++)
 		{
@@ -163,19 +162,19 @@ bool poly::isconvex()
 	else return true;
 }
 
-void poly::createSubPolys()
+void poly::createConvexPolys()
 {
 	vector<float> xintersects;
 	vector<float> yintersects;
+	float xsplit;
+	float ysplit;
+	int splitPos;
+	vector<int> pos;
 
-	if (x.size() > 2 && reflexAngles.size() > 0) // no need 4 sides, is only acheck to see if isconvex was done or calc sides
+	if (x.size() > 3 && reflexAngles.size() > 0) // no need 4 sides, is only acheck to see if isconvex was done or calc sides
 	{
-		//for (int i = 0; i != reflexAngles.size(); i++) // attentions start at 0
-		//{
 
-			//int &r = reflexAngles[i]; // temp alias to make lines shorter
-
-		int &r = reflexAngles[0];  // cmbine find reflex anglesto make find first reflex angle function and ind number of reflx angles
+		int &r = reflexAngles[0]; // incorperate into for loop to  cover all abses? or only use firstreflex angle if gonna do recursion
 
 
 
@@ -196,9 +195,24 @@ void poly::createSubPolys()
 								  xintersects,
 								  yintersects);
 
-						cout << u + 1 << " lmao ";
+						pos.push_back(u);
+
+						//cout << u + 1;
 					}
 				}
+
+				for (int i = 0; i != xintersects.size(); i++) // make function
+				{
+					if ((x[r] - x[x.size() - 1])*(xintersects[i] - x[x.size() - 1]) < 0 || (y[r] - y[x.size() - 1])*(yintersects[i] - y[x.size() - 1]) < 0)
+					{
+						xintersects.erase(xintersects.begin() + i);
+						yintersects.erase(yintersects.begin() + i); //crashed
+						pos.erase(pos.begin() + i);
+
+						i = 0;
+					}
+				}
+
 				
 			}
 			else
@@ -207,7 +221,7 @@ void poly::createSubPolys()
 				{
 					if (sides[r - 1].isBetween(vec(x[u] - x[r], y[u] - y[r]), vec(x[u + 1] - x[r], y[u + 1] - y[r])))
 					{
-						intersect(x[r - 1], //  check
+						intersect(x[r - 1],
 								  y[r - 1],
 								  x[r],
 								  y[r],
@@ -218,7 +232,9 @@ void poly::createSubPolys()
 								  xintersects,
 								  yintersects);
 
-						cout << u + 1 << " exdee ";
+						pos.push_back(u);
+
+						//cout << u + 1;
 					}
 	
 				}
@@ -226,7 +242,7 @@ void poly::createSubPolys()
 				{
 					if (sides[r - 1].isBetween(vec(x[u] - x[r], y[u] - y[r]), vec(x[u + 1] - x[r], y[u + 1] - y[r])))
 					{
-						intersect(x[r - 1], //  check
+						intersect(x[r - 1],
 								  y[r - 1],
 								  x[r],
 								  y[r],
@@ -236,14 +252,15 @@ void poly::createSubPolys()
 								  y[u + 1],
 								  xintersects,
 								  yintersects);
-						cout << u + 1 << " lol ";
+
+						pos.push_back(u);
 					}
 				}
 				if (r != x.size() - 1 && r != 1)
 				{
 					if (sides[r - 1].isBetween(vec(x[x.size() - 1] - x[r], y[x.size() - 1] - y[r]), vec(x[0] - x[r], y[0] - y[r])))
 					{
-						intersect(x[r - 1], //  check
+						intersect(x[r - 1],
 								  y[r - 1],
 								  x[r],
 								  y[r],
@@ -254,40 +271,45 @@ void poly::createSubPolys()
 								  xintersects,
 								  yintersects);
 
-						cout <<  x.size()  << " haha ";
+						pos.push_back(x.size() - 1);
+					}
+				}
+
+				for (int i = 0; i != xintersects.size(); i++) 
+				{
+					if ((x[r] - x[r - 1])*(xintersects[i] - x[r - 1]) < 0 || (y[r] - y[r - 1])*(yintersects[i] - y[r - 1]) < 0)
+					{
+						xintersects.erase(xintersects.begin() + i);
+						yintersects.erase(yintersects.begin() + i);
+						pos.erase(pos.begin() + i);
+
+						i = 0;
 					}
 				}
 			}
-			for (int i = 0; i < xintersects.size(); i++)
+
+			vector<float> tempmags; // replace use of vector
+
+			for (int i = 0; i != xintersects.size(); i++)
 			{
-				cout << "(" << xintersects[i] << "," << yintersects[i] << endl;
+				tempmags.push_back(vec(x[r] - xintersects[i], y[r] - yintersects[i]).mag());
 			}
 
-		//}
+			xsplit = xintersects[0];
+			ysplit = yintersects[0];
+			splitPos = pos[0];
+
+			for (int i = 1; i != tempmags.size(); i++)
+			{
+				if (tempmags[i] > tempmags[i - 1])
+				{
+					xsplit = xintersects[i];
+					ysplit = yintersects[i];
+					splitPos = pos[i];
+				}
+			}
 	}
-	cout << endl;
 }
 
-/*  
-	float m1, c1, m2, c2;
-    float x1, y1, x2, y2;
-    float dx, dy;
-    float intersection_X, intersection_Y;
 
-    dx = x2 - x1;
-    dy = y2 - y1;
- 
-    m1 = dy / dx;
-    // y = mx + c
-    // intercept c = y - mx
-    c1 = y1 - m1 * x1; // which is same as y2 - slope * x2
- 
-    if( (m1 - m2) == 0)
-        std::cout << "No Intersection between the lines\n";
-    else
-    {
-        intersection_X = (c2 - c1) / (m1 - m2);
-        intersection_Y = m1 * intersection_X + c1;
-    }
-*/
 

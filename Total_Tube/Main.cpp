@@ -8,6 +8,7 @@
 #include "Poly.h"
 #include "Utils.h"
 #include "Vectors.h"
+#include <vector> 
 
 #define PI 3.14159265
 
@@ -44,6 +45,9 @@ int main()
 	triangle.isconvex();
 	float tempx;
 
+	vector<float> x;
+	vector<float> y;
+
 	while (window.isOpen())
 	{
 		window.clear();
@@ -58,8 +62,16 @@ int main()
 				triangle.y.push_back(event.mouseButton.y);
 		
 				triangle.isconvex();
-				triangle.createSubPolys();
+				triangle.createConvexPolys();
 				Sleep(250);
+			}
+		}
+		
+		if (event.type == sf::Event::MouseButtonPressed)
+		{
+			if (event.mouseButton.button == sf::Mouse::Right) // male mouse button release
+			{
+				cout << "(" << event.mouseButton.x << "," << event.mouseButton.y << ")" << endl;
 			}
 		}
 
