@@ -111,7 +111,7 @@ bool poly::iscollide(poly testshape)
 	return true;
 }
 
-void poly::drawSolid(sf::RenderWindow &window, sf::Color color)
+void poly::drawConvexSolid(sf::RenderWindow &window, sf::Color color)
 {
 	sf::ConvexShape convex;
 	convex.setFillColor(color);
@@ -123,6 +123,14 @@ void poly::drawSolid(sf::RenderWindow &window, sf::Color color)
 		convex.setPoint(i, sf::Vector2f(x[i], y[i]));
 	}
 	window.draw(convex);
+}
+
+void poly::drawSolid(sf::RenderWindow &window, sf::Color color) // only if all are convex
+{
+	for (int i = 0; i != subPolys.size(); i++)
+	{
+		subPolys[i].drawConvexSolid(window, color);
+	}
 }
 
 void poly::calcSides()
@@ -162,7 +170,7 @@ bool poly::isconvex()
 	else return true;
 }
 
-void poly::createConvexPolys()
+void poly::splitReflex()
 {
 	vector<float> xintersects;
 	vector<float> yintersects;
@@ -210,7 +218,7 @@ void poly::createConvexPolys()
 						pos.erase(pos.begin() + i);
 
 						i = 0;
-					}
+					}// may not be sound logic ^, bug warning.
 				}
 
 				
@@ -308,8 +316,89 @@ void poly::createConvexPolys()
 					splitPos = pos[i];
 				}
 			}
+
+			poly  first, second;
+			
+
+			if (r < splitPos)// guarnatee?
+			{
+				first.x.push_back(xsplit);
+				first.y.push_back(ysplit);
+
+				for (int i = splitPos + 1; i != x.size(); i++)
+				{
+					first.x.push_back(x[i]);
+					first.y.push_back(y[i]);
+				}
+				for (int i = 0; i != r; i++)
+				{
+					first.x.push_back(x[i]);
+					first.y.push_back(y[i]);
+				}
+
+				for (int i = r; i != splitPos + 1; i++) // watch !='s
+				{
+					second.x.push_back(x[i]);
+					second.y.push_back(y[i]);
+				}
+
+				second.x.push_back(xsplit);
+				second.y.push_back(ysplit);
+			}
+			else
+			{
+				first.x.push_back(xsplit);
+				first.y.push_back(ysplit);
+
+				for (int i = splitPos + 1; i != r; i++)
+				{
+					first.x.push_back(x[i]);
+					first.y.push_back(y[i]);
+				}
+
+				for (int i = r; i != x.size(); i++)
+				{
+					second.x.push_back(x[i]);
+					second.y.push_back(y[i]);
+				}
+				for (int i = 0; i != splitPos + 1; i++)
+				{
+					second.x.push_back(x[i]);
+					second.y.push_back(y[i]);
+				}
+
+				second.x.push_back(xsplit);
+				second.y.push_back(ysplit);
+			}
+
+			subPolys.push_back(first);
+			subPolys.push_back(second);
+	} // watch for split pos bugs
+}
+
+void poly::rotatePoly(float rad, int originx, int originy) // doesnt inlcude subPolys
+{
+	for (int i = 0; i < x.size(); i++)
+	{
+		float tempx = x[i];
+		x[i] = (x[i] - originx)* cos(rad) - (y[i] - originy) * sin(rad) + originx;
+		y[i] = (y[i] - originy)* cos(rad) + (tempx - originx) * sin(rad) + originy;
 	}
 }
+
+void poly::rotate(float rad) //include subPolys
+{
+	rotatePoly(rad, originx, originy);
+
+	if (subPolys.size() > 0)
+	{
+		for (int i = 0; i != subPolys.size(); i++)
+		{
+			subPolys[i].rotatePoly(rad, originx, originy);
+		}
+	}
+}
+
 
 
 

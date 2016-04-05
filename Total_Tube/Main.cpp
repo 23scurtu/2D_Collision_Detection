@@ -14,8 +14,8 @@
 
 using namespace std;
 
-vector<float> project_square;
-vector<float> project_triangle;
+vector<float> project_obsticle;
+vector<float> project_testShape;
 vec tempvect;
 vec collidervect;
 vec tempvect_norm;
@@ -29,20 +29,20 @@ int main()
 
 	sf::RenderWindow window(sf::VideoMode(1000, 500), "SFML Application");
 
-	poly triangle;
-	poly square;
+	poly testShape;
+	poly obsticle;
 
-	//triangle.x = { 0, 220, 200 };
-	//triangle.y = { 110, 150, 200 };
-	triangle.originx = 175;
-	triangle.originy = 175;
+	//testShape.x = { 0, 220, 200 };
+	//testShape.y = { 110, 150, 200 };
+	testShape.originx = 175;
+	testShape.originy = 175;
 
-	square.x = { 300, 400, 400, 300 };
-	square.y = { 300, 300, 400, 400 };
-	//square.originx = 0;
-	//square.originy = 0;
+	obsticle.x = { 300, 400, 400, 300 };
+	obsticle.y = { 300, 300, 400, 400 };
+	//obsticle.originx = 0;
+	//obsticle.originy = 0;
 
-	triangle.isconvex();
+	testShape.isconvex();
 	float tempx;
 
 	vector<float> x;
@@ -58,11 +58,11 @@ int main()
 		{
 			if (event.mouseButton.button == sf::Mouse::Left) // male mouse button release
 			{
-				triangle.x.push_back(event.mouseButton.x);
-				triangle.y.push_back(event.mouseButton.y);
+				testShape.x.push_back(event.mouseButton.x);
+				testShape.y.push_back(event.mouseButton.y);
 		
-				triangle.isconvex();
-				triangle.createConvexPolys();
+				testShape.isconvex();
+				testShape.splitReflex();
 				Sleep(250);
 			}
 		}
@@ -77,68 +77,65 @@ int main()
 
 		if (GetAsyncKeyState(0x41))
 		{
-			for (int i = 0; i < triangle.x.size(); i++)
-			{
-				tempx = triangle.x[i];
-				triangle.x[i] = (triangle.x[i] - triangle.originx)* cos(PI / 180) - (triangle.y[i] - triangle.originy) * sin(PI / 180) + triangle.originx;
-				triangle.y[i] = (triangle.y[i] - triangle.originy)* cos(PI / 180) + (tempx - triangle.originx) * sin(PI / 180) + triangle.originy;
-			}
+			testShape.rotate(0.01);
+
 		}
 		if (GetAsyncKeyState(0x44))
 		{
-			for (int i = 0; i < triangle.x.size(); i++)
-			{
-				tempx = triangle.x[i];
-				triangle.x[i] = (triangle.x[i] - triangle.originx)* cos(-PI / 180) - (triangle.y[i] - triangle.originy) * sin(-PI / 180) + triangle.originx;
-				triangle.y[i] = (triangle.y[i] - triangle.originy)* cos(-PI / 180) + (tempx - triangle.originx) * sin(-PI / 180) + triangle.originy;
-			}
+			testShape.rotate(-0.01);
 		}
 
 		if (GetAsyncKeyState(VK_LEFT))
 		{
-			for (int i = 0; i < triangle.x.size(); i++)
+			for (int i = 0; i < testShape.x.size(); i++)
 			{
-				triangle.x[i]--;
+				testShape.x[i]--;
 			}	
-			triangle.originx--;
+			testShape.originx--;
 		}
 
 		if (GetAsyncKeyState(VK_RIGHT))
 		{
-			for (int i = 0; i < triangle.x.size(); i++)
+			for (int i = 0; i < testShape.x.size(); i++)
 			{
-				triangle.x[i]++;
+				testShape.x[i]++;
 			}
-			triangle.originx++;
+			testShape.originx++;
 		}
 		if (GetAsyncKeyState(VK_UP))
 		{
-			for (int i = 0; i < triangle.x.size(); i++)
+			for (int i = 0; i < testShape.x.size(); i++)
 			{
-				triangle.y[i]--;
+				testShape.y[i]--;
 			}
-			triangle.originy--;
+			testShape.originy--;
 		}
 
 		if (GetAsyncKeyState(VK_DOWN))
 		{
-			for (int i = 0; i < triangle.x.size(); i++)
+			for (int i = 0; i < testShape.x.size(); i++)
 			{
-				triangle.y[i]++;
+				testShape.y[i]++;
 			}
-			triangle.originy++;
+			testShape.originy++;
 		}
-		if (triangle.iscollide(square))
+		if (testShape.iscollide(obsticle))
 		{
-			triangle.drawSolid(window, sf::Color::Red);
+			testShape.drawSolid(window, sf::Color::Red);
 		}
 		else
 		{
-			triangle.drawSolid(window, sf::Color::Green);
+			testShape.drawSolid(window, sf::Color::Green);
 		}
 		if (event.type == sf::Event::Closed) window.close();
 
-		square.drawSolid(window, sf::Color::Green);
+		obsticle.drawConvexSolid(window, sf::Color::Green);
+
+		/*if (testShape.subPolys.size() > 0)
+		{
+			testShape.subPolys[0].drawConvexSolid(window, sf::Color::Blue);
+		}*/
+
 		window.display();
 		Sleep(sleeptime);
 	}
