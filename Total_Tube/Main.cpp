@@ -22,6 +22,7 @@ vec tempvect_norm;
 vec unittempvect_norm;
 bool collide = true;
 int sleeptime = 3;
+float moveSpeed = 1;
 
 int main()
 {
@@ -34,8 +35,8 @@ int main()
 
 	//testShape.x = { 0, 220, 200 };
 	//testShape.y = { 110, 150, 200 };
-	testShape.originx = 175;
-	testShape.originy = 175;
+	testShape.xOrigin = 175;
+	testShape.yOrigin = 175;
 
 	obsticle.x = { 300, 400, 400, 300 };
 	obsticle.y = { 300, 300, 400, 400 };
@@ -62,7 +63,8 @@ int main()
 				testShape.y.push_back(event.mouseButton.y);
 		
 				testShape.isconvex();
-				testShape.splitReflex();
+				testShape.createConvexPolys();
+
 				Sleep(250);
 			}
 		}
@@ -87,39 +89,24 @@ int main()
 
 		if (GetAsyncKeyState(VK_LEFT))
 		{
-			for (int i = 0; i < testShape.x.size(); i++)
-			{
-				testShape.x[i]--;
-			}	
-			testShape.originx--;
+			testShape.xTranslate(-moveSpeed);
 		}
 
 		if (GetAsyncKeyState(VK_RIGHT))
 		{
-			for (int i = 0; i < testShape.x.size(); i++)
-			{
-				testShape.x[i]++;
-			}
-			testShape.originx++;
+			testShape.xTranslate(moveSpeed);
 		}
 		if (GetAsyncKeyState(VK_UP))
 		{
-			for (int i = 0; i < testShape.x.size(); i++)
-			{
-				testShape.y[i]--;
-			}
-			testShape.originy--;
+			testShape.yTranslate(-moveSpeed);
 		}
 
 		if (GetAsyncKeyState(VK_DOWN))
 		{
-			for (int i = 0; i < testShape.x.size(); i++)
-			{
-				testShape.y[i]++;
-			}
-			testShape.originy++;
+			testShape.yTranslate(moveSpeed);
 		}
-		if (testShape.iscollide(obsticle))
+
+		if (testShape.isCollide(obsticle))
 		{
 			testShape.drawSolid(window, sf::Color::Red);
 		}

@@ -18,7 +18,7 @@ poly::poly()
 }
 
 
-bool poly::iscollide(poly testshape)
+bool poly::isConvexCollide(poly testshape)
 {
 	vec tempvect;
 	vec tempvect_norm;
@@ -166,8 +166,8 @@ bool poly::isconvex()
 	}
 
 	if (reflexAngles.size() == 0) 
-		return false;
-	else return true;
+		return true;
+	else return false;
 }
 
 void poly::splitReflex()
@@ -376,29 +376,137 @@ void poly::splitReflex()
 	} // watch for split pos bugs
 }
 
-void poly::rotatePoly(float rad, int originx, int originy) // doesnt inlcude subPolys
+void poly::rotatePoly(float rad, int xOrigin, int yOrigin) // doesnt inlcude subPolys
 {
 	for (int i = 0; i < x.size(); i++)
 	{
 		float tempx = x[i];
-		x[i] = (x[i] - originx)* cos(rad) - (y[i] - originy) * sin(rad) + originx;
-		y[i] = (y[i] - originy)* cos(rad) + (tempx - originx) * sin(rad) + originy;
+		x[i] = (x[i] - xOrigin)* cos(rad) - (y[i] - yOrigin) * sin(rad) + xOrigin;
+		y[i] = (y[i] - yOrigin)* cos(rad) + (tempx - xOrigin) * sin(rad) + yOrigin;
 	}
 }
 
 void poly::rotate(float rad) //include subPolys
 {
-	rotatePoly(rad, originx, originy);
+	rotatePoly(rad, xOrigin, yOrigin);
 
 	if (subPolys.size() > 0)
 	{
 		for (int i = 0; i != subPolys.size(); i++)
 		{
-			subPolys[i].rotatePoly(rad, originx, originy);
+			subPolys[i].rotatePoly(rad, xOrigin, yOrigin);
 		}
 	}
 }
 
+void poly::xTranslate(float input)
+{
+	xOrigin += input;
+
+	for (int i = 0; i != x.size(); i++)
+	{
+		x[i] += input;
+	}
+
+	if (subPolys.size() != 0)
+	{
+		for (int u = 0; u != subPolys.size(); u++)
+		{
+			for (int i = 0; i != x.size(); i++)
+			{
+				subPolys[u].x[i] += input;
+			}
+		}
+	}
+}
+void poly::yTranslate(float input)
+{
+	yOrigin += input;
+
+	for (int i = 0; i != x.size(); i++)
+	{
+		y[i] += input;
+	}
+
+	if (subPolys.size() != 0)
+	{
+		for (int u = 0; u != subPolys.size(); u++)
+		{
+			for (int i = 0; i != x.size(); i++)
+			{
+				subPolys[u].y[i] += input;
+			}
+		}
+	}
+}
+bool poly::isCollide(poly testshape)
+{
+	if (testshape.subPolys.size() == 0)
+	{
+		for (int i = 0; i != subPolys.size(); i++)
+		{
+			if (subPolys[i].isConvexCollide(testshape)) return true;
+		}
+	}
+	else 
+	{
+		for (int u = 0; u != testshape.subPolys.size(); u++)
+		{
+			for (int i = 0; i != subPolys.size(); i++)
+			{
+				if (subPolys[i].isConvexCollide(testshape.subPolys[u])) return true;
+			}
+		}
+		return false;
+	}
+}
+
+void poly::createConvexPolys()
+{
+	vector<bool> convexPolys;
+
+	subPolys.clear();
+
+	splitReflex();
+
+	for (int i = 0; i != subPolys.size(); i++)
+	{
+		convexPolys.push_back(subPolys[i].isconvex());
+	}
+
+	bool repeat = false;
+
+	for (int i = 0; i != subPolys.size(); i++)
+	{
+		if (repeat == true && i == 0)
+		{
+			i--;
+			repeat = false;
+		}
+
+		if (!convexPolys[i])
+		{
+
+			subPolys[i].splitReflex();
+
+			convexPolys.push_back(subPolys[i].subPolys[0].isconvex()); //insert into list of which subpolys are concave
+			convexPolys.push_back(subPolys[i].subPolys[1].isconvex());
+			convexPolys.erase(convexPolys.begin() + i);
+
+			subPolys.push_back(subPolys[i].subPolys[0]);
+			subPolys.push_back(subPolys[i].subPolys[1]);
+			subPolys.erase(subPolys.begin() + i);
+			
+			repeat = true;
+		}
+		if (repeat == true && i != 0)
+		{
+			i--;
+			repeat = false;
+		}
+
+	}
+}
 
 
 

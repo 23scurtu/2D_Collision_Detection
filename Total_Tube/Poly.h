@@ -19,10 +19,11 @@ class poly
 		vector<float> x;
 		vector<float> y;
 
-		bool iscollide(poly testshape); // clean up pl0x
+		bool isConvexCollide(poly testshape); // coldies convexHull
+		bool isCollide(poly testshape); // used colides subPolys
 
-		int originx;
-		int originy;
+		float xOrigin;
+		float yOrigin;
 		void drawConvexSolid(sf::RenderWindow &window, sf::Color color);
 		void drawSolid(sf::RenderWindow &window, sf::Color color);
 		bool isconvex();
@@ -30,7 +31,13 @@ class poly
 		void calcSides();
 		void rotatePoly(float rad, int originx, int originy);
 		void rotate(float rad);
+		void xTranslate(float input);
+		void yTranslate(float input);
+		void createConvexPolys();
+		//make translate func accepting vector for later physics
+		//make class for concave polys that inherites poly?
 };
+
 
 
 #endif 
