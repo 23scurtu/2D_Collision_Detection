@@ -1,4 +1,5 @@
 #include "Vectors.h"
+#include <math.h>
 
 vec::vec()
 	:x(0.f), y(0.f){};

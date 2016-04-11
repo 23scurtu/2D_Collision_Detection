@@ -8,7 +8,7 @@
 #include "Poly.h"
 #include "Utils.h"
 #include "Vectors.h"
-#include <vector> 
+#include <vector>
 
 #define PI 3.14159265
 
@@ -46,9 +46,6 @@ int main()
 	testShape.isconvex();
 	float tempx;
 
-	vector<float> x;
-	vector<float> y;
-
 	while (window.isOpen())
 	{
 		window.clear();
@@ -61,16 +58,28 @@ int main()
 			{
 				testShape.x.push_back(event.mouseButton.x);
 				testShape.y.push_back(event.mouseButton.y);
-		
-				testShape.isconvex();
+
+				testShape.isconvex(); //to calcc reflex angles, make seperate?
 				testShape.createConvexPolys();
+
+                for(int i = 0; i!= testShape.subPolys.size(); i++)
+                {
+                    cout << testShape.subPolys[i].isconvex();
+                }
+                cout << endl;
+
+                for(int i = 0; i!= testShape.subPolys.size(); i++)
+                {
+                   for(int u = 0; u != testShape.subPolys[i].x.size(); u++)
+                   {
+                        cout << "(" << testShape.subPolys[i].x[u] << "," << testShape.subPolys[i].y[u] << "), ";
+                   }
+                   cout<< endl;
+                }
+                cout << endl;
 
 				Sleep(250);
 			}
-		}
-		
-		if (event.type == sf::Event::MouseButtonPressed)
-		{
 			if (event.mouseButton.button == sf::Mouse::Right) // male mouse button release
 			{
 				cout << "(" << event.mouseButton.x << "," << event.mouseButton.y << ")" << endl;
@@ -109,6 +118,7 @@ int main()
 		if (testShape.isCollide(obsticle))
 		{
 			testShape.drawSolid(window, sf::Color::Red);
+
 		}
 		else
 		{

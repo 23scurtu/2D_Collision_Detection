@@ -34,7 +34,7 @@ bool poly::isConvexCollide(poly testshape)
 		{
 			tempvect.set(x[i + 1] - x[i], y[i + 1] - y[i]);
 		}
-		
+
 		else
 		{
 			tempvect.set(x[0] - x[i], y[0] - y[i]);
@@ -64,7 +64,7 @@ bool poly::isConvexCollide(poly testshape)
 
 		project_first.clear();
 		project_second.clear();
-		
+
 
 	}
 
@@ -116,6 +116,9 @@ void poly::drawConvexSolid(sf::RenderWindow &window, sf::Color color)
 	sf::ConvexShape convex;
 	convex.setFillColor(color);
 
+	convex.setOutlineThickness(1);
+	convex.setOutlineColor(sf::Color::Black);
+
 	convex.setPointCount(x.size());
 
 	for (int i = 0; i != x.size(); i++)
@@ -125,12 +128,19 @@ void poly::drawConvexSolid(sf::RenderWindow &window, sf::Color color)
 	window.draw(convex);
 }
 
-void poly::drawSolid(sf::RenderWindow &window, sf::Color color) // only if all are convex
+void poly::drawSolid(sf::RenderWindow &window, sf::Color color) // handles whether convex or not but uses isconvex, better?
 {
-	for (int i = 0; i != subPolys.size(); i++)
-	{
-		subPolys[i].drawConvexSolid(window, color);
-	}
+    if (isconvex())
+    {
+        drawConvexSolid(window, color);
+    }
+    else
+    {
+        for (int i = 0; i != subPolys.size(); i++)
+        {
+            subPolys[i].drawConvexSolid(window, color);
+        }
+    }
 }
 
 void poly::calcSides()
@@ -149,7 +159,7 @@ void poly::calcSides()
 
 bool poly::isconvex()
 {
-	
+
 	if (x.size() > 2)
 	{
 		calcSides();
@@ -165,7 +175,7 @@ bool poly::isconvex()
 		}
 	}
 
-	if (reflexAngles.size() == 0) 
+	if (reflexAngles.size() == 0)
 		return true;
 	else return false;
 }
@@ -182,13 +192,13 @@ void poly::splitReflex()
 	if (x.size() > 3 && reflexAngles.size() > 0) // no need 4 sides, is only acheck to see if isconvex was done or calc sides
 	{
 
-		int &r = reflexAngles[0]; // incorperate into for loop to  cover all abses? or only use firstreflex angle if gonna do recursion
+		int &r = reflexAngles[0];
 
-
+		cout << "lol";
 
 			if (r == 0) // maybe incorperate into bottom one
 			{
-				for (int u = 1; u < x.size() - 2; u++)
+				for (int u = 1; u < x.size() - 2; u++) // CHANGED FROM 1
 				{
 					if (sides[sides.size() - 1].isBetween(vec(x[u] - x[r], y[u] - y[r]), vec(x[u + 1] - x[r], y[u + 1] - y[r])))
 					{
@@ -209,6 +219,7 @@ void poly::splitReflex()
 					}
 				}
 
+
 				for (int i = 0; i != xintersects.size(); i++) // make function
 				{
 					if ((x[r] - x[x.size() - 1])*(xintersects[i] - x[x.size() - 1]) < 0 || (y[r] - y[x.size() - 1])*(yintersects[i] - y[x.size() - 1]) < 0)
@@ -221,7 +232,7 @@ void poly::splitReflex()
 					}// may not be sound logic ^, bug warning.
 				}
 
-				
+
 			}
 			else
 			{
@@ -244,7 +255,7 @@ void poly::splitReflex()
 
 						//cout << u + 1;
 					}
-	
+
 				}
 				for (int u = r + 1; u < x.size() - 1; u++)
 				{
@@ -283,7 +294,7 @@ void poly::splitReflex()
 					}
 				}
 
-				for (int i = 0; i != xintersects.size(); i++) 
+				for (int i = 0; i != xintersects.size(); i++)
 				{
 					if ((x[r] - x[r - 1])*(xintersects[i] - x[r - 1]) < 0 || (y[r] - y[r - 1])*(yintersects[i] - y[r - 1]) < 0)
 					{
@@ -291,7 +302,7 @@ void poly::splitReflex()
 						yintersects.erase(yintersects.begin() + i);
 						pos.erase(pos.begin() + i);
 
-						i = 0;
+                        i = 0; //inefficient
 					}
 				}
 			}
@@ -302,10 +313,14 @@ void poly::splitReflex()
 			{
 				tempmags.push_back(vec(x[r] - xintersects[i], y[r] - yintersects[i]).mag());
 			}
+            //////////////////////////
+            cout << "|" <<xintersects[0] << "|" << endl;
+            cout << "|" << yintersects[0] << "|" << endl;
 
-			xsplit = xintersects[0];
-			ysplit = yintersects[0];
-			splitPos = pos[0];
+            xsplit = xintersects[0];
+            ysplit = yintersects[0];
+            splitPos = pos[0];
+            //////////////////////////
 
 			for (int i = 1; i != tempmags.size(); i++)
 			{
@@ -317,8 +332,9 @@ void poly::splitReflex()
 				}
 			}
 
+			cout << vec(xsplit - x[r], ysplit - y[r]).mag() << endl<< endl;
 			poly  first, second;
-			
+
 
 			if (r < splitPos)// guarnatee?
 			{
@@ -412,7 +428,7 @@ void poly::xTranslate(float input)
 	{
 		for (int u = 0; u != subPolys.size(); u++)
 		{
-			for (int i = 0; i != x.size(); i++)
+			for (int i = 0; i != subPolys[u].x.size(); i++)
 			{
 				subPolys[u].x[i] += input;
 			}
@@ -432,7 +448,7 @@ void poly::yTranslate(float input)
 	{
 		for (int u = 0; u != subPolys.size(); u++)
 		{
-			for (int i = 0; i != x.size(); i++)
+			for (int i = 0; i != subPolys[u].x.size(); i++)
 			{
 				subPolys[u].y[i] += input;
 			}
@@ -448,7 +464,7 @@ bool poly::isCollide(poly testshape)
 			if (subPolys[i].isConvexCollide(testshape)) return true;
 		}
 	}
-	else 
+	else
 	{
 		for (int u = 0; u != testshape.subPolys.size(); u++)
 		{
@@ -457,13 +473,13 @@ bool poly::isCollide(poly testshape)
 				if (subPolys[i].isConvexCollide(testshape.subPolys[u])) return true;
 			}
 		}
-		return false;
 	}
+	return false;
 }
 
 void poly::createConvexPolys()
 {
-	vector<bool> convexPolys;
+	/*vector<bool> convexPolys;
 
 	subPolys.clear();
 
@@ -496,7 +512,7 @@ void poly::createConvexPolys()
 			subPolys.push_back(subPolys[i].subPolys[0]);
 			subPolys.push_back(subPolys[i].subPolys[1]);
 			subPolys.erase(subPolys.begin() + i);
-			
+
 			repeat = true;
 		}
 		if (repeat == true && i != 0)
@@ -505,7 +521,40 @@ void poly::createConvexPolys()
 			repeat = false;
 		}
 
-	}
+	}*/
+	subPolys.clear();
+
+	splitReflex();
+
+	bool repeat = false;
+    for(int i = 0; i != 2; i++)
+    {
+        for (int i = 0; i != subPolys.size(); i++)
+        {
+            if (repeat == true && i != 0)
+            {
+                i--;
+                repeat = false;
+            }
+
+            if (!subPolys[i].isconvex())
+            {
+                subPolys[i].splitReflex();
+
+                subPolys.push_back(subPolys[i].subPolys[0]);
+                subPolys.push_back(subPolys[i].subPolys[1]);
+                subPolys.erase(subPolys.begin() + i);
+
+                repeat = true;
+            }
+            if (repeat == true && i == 0)
+            {
+                i--;
+                repeat = false;
+            }
+
+        }
+	}cout << "[" << subPolys.size() << "]" << endl;
 }
 
 
