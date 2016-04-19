@@ -506,6 +506,7 @@ void poly::createConvexPolys()
 		{
 			concaves[i].splitReflex();
 
+<<<<<<< HEAD
 			if (concaves[i].subPolys[0].isconvex())
 			{
 				subPolys.push_back(concaves[i].subPolys[0]);
@@ -527,6 +528,35 @@ void poly::createConvexPolys()
 		concaves = next;
 		next.clear();
 	}
+=======
+	bool repeat = false;
+    
+        for (int i = 0; i != subPolys.size(); i++)
+        {
+            if (repeat == true && i != 0)
+            {
+                i--;
+                repeat = false;
+            }
+
+            if (!subPolys[i].isconvex())
+            {
+                subPolys[i].splitReflex();
+
+                subPolys.push_back(subPolys[i].subPolys[0]);
+                subPolys.push_back(subPolys[i].subPolys[1]);
+                subPolys.erase(subPolys.begin() + i);
+
+                repeat = true;
+            }
+            if (repeat == true && i == 0)
+            {
+                i--;
+                repeat = false;
+            }
+
+        }
+>>>>>>> origin/master
 	cout << "[" << subPolys.size() << "]" << endl;
 }
 
