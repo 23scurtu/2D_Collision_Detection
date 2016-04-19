@@ -479,82 +479,55 @@ bool poly::isCollide(poly testshape)
 
 void poly::createConvexPolys()
 {
-	/*vector<bool> convexPolys;
-
 	subPolys.clear();
 
 	splitReflex();
 
+	vector<poly> concaves, next, temp;
+
+
 	for (int i = 0; i != subPolys.size(); i++)
 	{
-		convexPolys.push_back(subPolys[i].isconvex());
+		if (subPolys[i].isconvex())
+		{
+			temp.push_back(subPolys[i]);
+		}
+		else
+		{
+			concaves.push_back(subPolys[i]);
+		}
 	}
 
-	bool repeat = false;
+	subPolys = temp;
 
-	for (int i = 0; i != subPolys.size(); i++)
+	while (concaves.size() != 0)
 	{
-		if (repeat == true && i == 0)
+		for (int i = 0; i != concaves.size(); i++)
 		{
-			i--;
-			repeat = false;
+			concaves[i].splitReflex();
+
+			if (concaves[i].subPolys[0].isconvex())
+			{
+				subPolys.push_back(concaves[i].subPolys[0]);
+			}
+			else
+			{
+				next.push_back(concaves[i].subPolys[0]);
+			}
+
+			if (concaves[i].subPolys[1].isconvex())
+			{
+				subPolys.push_back(concaves[i].subPolys[1]);
+			}
+			else
+			{
+				next.push_back(concaves[i].subPolys[1]);
+			}
 		}
-
-		if (!convexPolys[i])
-		{
-
-			subPolys[i].splitReflex();
-
-			convexPolys.push_back(subPolys[i].subPolys[0].isconvex()); //insert into list of which subpolys are concave
-			convexPolys.push_back(subPolys[i].subPolys[1].isconvex());
-			convexPolys.erase(convexPolys.begin() + i);
-
-			subPolys.push_back(subPolys[i].subPolys[0]);
-			subPolys.push_back(subPolys[i].subPolys[1]);
-			subPolys.erase(subPolys.begin() + i);
-
-			repeat = true;
-		}
-		if (repeat == true && i != 0)
-		{
-			i--;
-			repeat = false;
-		}
-
-	}*/
-	subPolys.clear();
-
-	splitReflex();
-
-	bool repeat = false;
-    for(int i = 0; i != 2; i++)
-    {
-        for (int i = 0; i != subPolys.size(); i++)
-        {
-            if (repeat == true && i != 0)
-            {
-                i--;
-                repeat = false;
-            }
-
-            if (!subPolys[i].isconvex())
-            {
-                subPolys[i].splitReflex();
-
-                subPolys.push_back(subPolys[i].subPolys[0]);
-                subPolys.push_back(subPolys[i].subPolys[1]);
-                subPolys.erase(subPolys.begin() + i);
-
-                repeat = true;
-            }
-            if (repeat == true && i == 0)
-            {
-                i--;
-                repeat = false;
-            }
-
-        }
-	}cout << "[" << subPolys.size() << "]" << endl;
+		concaves = next;
+		next.clear();
+	}
+	cout << "[" << subPolys.size() << "]" << endl;
 }
 
 
