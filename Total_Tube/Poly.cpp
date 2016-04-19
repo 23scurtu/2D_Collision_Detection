@@ -527,8 +527,7 @@ void poly::createConvexPolys()
 	splitReflex();
 
 	bool repeat = false;
-    for(int i = 0; i != 2; i++)
-    {
+    
         for (int i = 0; i != subPolys.size(); i++)
         {
             if (repeat == true && i != 0)
@@ -554,7 +553,7 @@ void poly::createConvexPolys()
             }
 
         }
-	}cout << "[" << subPolys.size() << "]" << endl;
+	cout << "[" << subPolys.size() << "]" << endl;
 }
 
 
