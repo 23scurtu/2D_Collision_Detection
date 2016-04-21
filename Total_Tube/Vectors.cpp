@@ -30,7 +30,7 @@ bool vec::isBetween(vec vec1, vec vec2) // checks to see if a vector is between 
 	if (cross(vec1) == 0 || cross(vec2) == 0) return true;
 
 	if (cross(vec1) < 0 && cross(vec2) > 0) return true;
-	else if (cross(vec1) > 0 && cross(vec2) < 0) return true;
+	if (cross(vec1) > 0 && cross(vec2) < 0) return true;
 
 	return false;
 }

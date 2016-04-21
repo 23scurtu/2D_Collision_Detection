@@ -38,8 +38,8 @@ int main()
 	testShape.xOrigin = 175;
 	testShape.yOrigin = 175;
 
-	obsticle.x = { 300, 400, 400, 300 };
-	obsticle.y = { 300, 300, 400, 400 };
+	obsticle.x = { 300, 350, 350, 300 };
+	obsticle.y = { 300, 300, 350, 350 };
 	//obsticle.originx = 0;
 	//obsticle.originy = 0;
 
@@ -61,22 +61,6 @@ int main()
 
 				testShape.isconvex(); //to calcc reflex angles, make seperate?
 				testShape.createConvexPolys();
-
-                for(int i = 0; i!= testShape.subPolys.size(); i++)
-                {
-                    cout << testShape.subPolys[i].isconvex();
-                }
-                cout << endl;
-
-                for(int i = 0; i!= testShape.subPolys.size(); i++)
-                {
-                   for(int u = 0; u != testShape.subPolys[i].x.size(); u++)
-                   {
-                        cout << "(" << testShape.subPolys[i].x[u] << "," << testShape.subPolys[i].y[u] << "), ";
-                   }
-                   cout<< endl;
-                }
-                cout << endl;
 
 				Sleep(250);
 			}

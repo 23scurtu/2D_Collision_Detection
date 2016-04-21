@@ -29,7 +29,7 @@ class poly
 		bool isconvex();
 		void splitReflex();
 		void calcSides();
-		void rotatePoly(float rad, int originx, int originy);
+		void rotatePoly(float rad, float originx, float originy);
 		void rotate(float rad);
 		void xTranslate(float input);
 		void yTranslate(float input);
