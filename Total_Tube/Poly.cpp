@@ -149,12 +149,8 @@ void poly::calcSides()
 	for (int i = 0; i < x.size() - 1; i++)
 	{
 		sides.push_back(vec(x[i + 1] - x[i], y[i + 1] - y[i]));
-		//cout << x[i + 1] - x[i] << endl;
-		//cout << y[i + 1] - y[i] << endl << endl;
 	}
 	sides.push_back(vec(x[0] - x[x.size() - 1], y[0] - y[y.size() - 1]));
-	//cout << x[0] - x[x.size() - 1] << endl;
-	//cout << y[0] - y[y.size() - 1] << endl << endl;
 }
 
 bool poly::isconvex()
@@ -196,16 +192,8 @@ void poly::splitReflex()
 
 			if (r == 0)
 			{
-				/*for (int i = 0; i != x.size(); i++)
-				{
-					cout << "(" << x[i] << "," << y[i] << ")";
-				}
-				cout << "**" << endl;*/
-
-				for (int u = 1; u < x.size() - 2; u++)  // NOT LOADING IN VALUES
-				{
-					cout << "=" << x[u] - x[r] << "," << y[u] - y[r] << "=" << x[u + 1] - x[r] << "," << y[u + 1] - y[r] << "=" << sides[sides.size() - 1].x << "," << sides[sides.size() - 1].y << "=" << endl;
-					
+				for (int u = 1; u < x.size() - 2; u++)
+				{		
 					if (sides[sides.size() - 1].isBetween(vec(x[u] - x[r], y[u] - y[r]), vec(x[u + 1] - x[r], y[u + 1] - y[r])))
 					{
 						intersect(x[x.size() - 1],
@@ -220,24 +208,21 @@ void poly::splitReflex()
 								  yintersects);
 						
 						pos.push_back(u);
-
-						//cout << u + 1;
-					}///////////////////BEING SKIPPED
+					}
 					
 				}
 
-				cout << endl << "|" << xintersects.size() << "|";
 
 				for (int i = 0; i != xintersects.size(); i++) // make function
 				{
 					if ((x[r] - x[x.size() - 1])*(xintersects[i] - x[x.size() - 1]) < 0 || (y[r] - y[x.size() - 1])*(yintersects[i] - y[x.size() - 1]) < 0)
 					{
 						xintersects.erase(xintersects.begin() + i);
-						yintersects.erase(yintersects.begin() + i); //crashed
+						yintersects.erase(yintersects.begin() + i);
 						pos.erase(pos.begin() + i);
 
-						i = 0;
-					}// may not be sound logic ^, bug warning.
+						i = 0; // costly.
+					}
 				}
 
 
@@ -260,8 +245,6 @@ void poly::splitReflex()
 								  yintersects);
 
 						pos.push_back(u);
-
-						//cout << u + 1;
 					}
 
 				}
@@ -301,8 +284,6 @@ void poly::splitReflex()
 						pos.push_back(x.size() - 1);
 					}
 				}
-
-				cout << endl << "|-" << xintersects.size() << "|";
 				
 				for (int i = 0; i != xintersects.size(); i++)
 				{
@@ -317,21 +298,16 @@ void poly::splitReflex()
 				}
 			}
 
-			cout << "---";
-
 			vector<float> tempmags; // replace use of vector
 
 			for (int i = 0; i != xintersects.size(); i++)
 			{
 				tempmags.push_back(vec(x[r] - xintersects[i], y[r] - yintersects[i]).mag());
 			}
-            //////////////////////////
-			cout <<"{" << xintersects.size() << "}";
 
             xsplit = xintersects[0];
             ysplit = yintersects[0];
             splitPos = pos[0];
-            //////////////////////////
 
 			for (int i = 1; i != tempmags.size(); i++)
 			{
@@ -343,11 +319,10 @@ void poly::splitReflex()
 				}
 			}
 
-			cout << vec(xsplit - x[r], ysplit - y[r]).mag() << endl<< endl;
 			poly  first, second;
 
 
-			if (r < splitPos)// guarnatee?
+			if (r < splitPos)
 			{
 				first.x.push_back(xsplit);
 				first.y.push_back(ysplit);
@@ -363,7 +338,7 @@ void poly::splitReflex()
 					first.y.push_back(y[i]);
 				}
 
-				for (int i = r; i != splitPos + 1; i++) // watch !='s
+				for (int i = r; i != splitPos + 1; i++)
 				{
 					second.x.push_back(x[i]);
 					second.y.push_back(y[i]);
@@ -539,7 +514,6 @@ void poly::createConvexPolys()
 		concaves = next;
 		next.clear();
 	}
-	cout << "[" << subPolys.size() << "]" << endl;
 }
 
 

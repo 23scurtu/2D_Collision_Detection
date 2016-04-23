@@ -33,15 +33,11 @@ int main()
 	poly testShape;
 	poly obsticle;
 
-	//testShape.x = { 0, 220, 200 };
-	//testShape.y = { 110, 150, 200 };
 	testShape.xOrigin = 175;
 	testShape.yOrigin = 175;
 
 	obsticle.x = { 300, 350, 350, 300 };
 	obsticle.y = { 300, 300, 350, 350 };
-	//obsticle.originx = 0;
-	//obsticle.originy = 0;
 
 	testShape.isconvex();
 	float tempx;
@@ -54,17 +50,17 @@ int main()
 
 		if (event.type == sf::Event::MouseButtonPressed)
 		{
-			if (event.mouseButton.button == sf::Mouse::Left) // male mouse button release
+			if (event.mouseButton.button == sf::Mouse::Left)
 			{
 				testShape.x.push_back(event.mouseButton.x);
 				testShape.y.push_back(event.mouseButton.y);
 
-				testShape.isconvex(); //to calcc reflex angles, make seperate?
+				testShape.isconvex(); //to calcc reflex angles, make seperate? <-- important
 				testShape.createConvexPolys();
 
 				Sleep(250);
 			}
-			if (event.mouseButton.button == sf::Mouse::Right) // male mouse button release
+			if (event.mouseButton.button == sf::Mouse::Right)
 			{
 				cout << "(" << event.mouseButton.x << "," << event.mouseButton.y << ")" << endl;
 			}
@@ -111,11 +107,6 @@ int main()
 		if (event.type == sf::Event::Closed) window.close();
 
 		obsticle.drawConvexSolid(window, sf::Color::Green);
-
-		/*if (testShape.subPolys.size() > 0)
-		{
-			testShape.subPolys[0].drawConvexSolid(window, sf::Color::Blue);
-		}*/
 
 		window.display();
 		Sleep(sleeptime);

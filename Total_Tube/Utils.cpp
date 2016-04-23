@@ -43,4 +43,25 @@ bool intersect(float x1, float y1, float x2, float y2, float x3, float y3, float
 			return true;
 		}
 	}
+	else if (x2 - x1 == 0)
+	{
+		float m2 = (y4 - y3) / (x4 - x3);
+		float c2 = y3 - m2*x3;
+
+		x.push_back(x1); //check
+		y.push_back(m2 * x1 + c2);
+		
+		return true;
+
+	}
+	else
+	{
+		float m1 = (y2 - y1) / (x2 - x1);
+		float c1 = y1 - m1*x1;
+
+		x.push_back(x3); //check
+		y.push_back(m1 * x3 + c1);
+
+		return true;
+	}
 }
