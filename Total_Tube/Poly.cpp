@@ -117,6 +117,7 @@ void poly::drawConvexSolid(sf::RenderWindow &window, sf::Color color)
 	convex.setFillColor(color);
 
 	convex.setOutlineThickness(1);
+	
 	convex.setOutlineColor(sf::Color::Black);
 
 	convex.setPointCount(x.size());
@@ -381,11 +382,15 @@ void poly::splitReflex()
 
 void poly::rotatePoly(float rad, float xOrigin, float yOrigin) // doesnt inlcude subPolys
 {
+	float cosine = cos(rad);
+	float sine = sin(rad);
+
+
 	for (int i = 0; i < x.size(); i++)
 	{
 		float tempx = x[i];
-		x[i] = (x[i] - xOrigin)* cos(rad) - (y[i] - yOrigin) * sin(rad) + xOrigin;
-		y[i] = (y[i] - yOrigin)* cos(rad) + (tempx - xOrigin) * sin(rad) + yOrigin;
+		x[i] = (x[i] - xOrigin)* cosine - (y[i] - yOrigin) * sine + xOrigin;
+		y[i] = (y[i] - yOrigin)* cosine + (tempx - xOrigin) * sine + yOrigin;
 	}
 }
 
@@ -444,23 +449,36 @@ void poly::yTranslate(float input)
 }
 bool poly::isCollide(poly testshape)
 {
-	if (testshape.subPolys.size() == 0)
+	if (testshape.subPolys.size() == 0 && subPolys.size() == 0)
 	{
-		for (int i = 0; i != subPolys.size(); i++)
+		return isConvexCollide(testshape);
+	}
+	else if (subPolys.size() == 0)
+	{
+		for (int u = 0; u != testshape.subPolys.size(); u++)
 		{
-			if (subPolys[i].isConvexCollide(testshape)) return true;
+			if (testshape.subPolys[u].isConvexCollide(*this)) return true;
+		}
+	}
+	else if (testshape.subPolys.size() == 0)
+	{
+		for (int u = 0; u != subPolys.size(); u++)
+		{
+			if (subPolys[u].isConvexCollide(testshape)) return true;
 		}
 	}
 	else
 	{
-		for (int u = 0; u != testshape.subPolys.size(); u++)
+		for (int u = 0; u != subPolys.size(); u++)
 		{
-			for (int i = 0; i != subPolys.size(); i++)
+			for (int i = 0; i != testshape.subPolys.size(); i++)
 			{
-				if (subPolys[i].isConvexCollide(testshape.subPolys[u])) return true;
+				if (subPolys[u].isConvexCollide(testshape.subPolys[i])) return true;
 			}
 		}
 	}
+	
+
 	return false;
 }
 
